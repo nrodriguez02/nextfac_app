@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section>
+        <div class="list-group list-group-flush mb-3">
+           {% for shift in shifts | sort(attribute='timein') %}
+            <div class="list-group-item">
+                <span>{{shift.desc}} | </span>
+                <span>Horario: {{shift.timein}} - {{shift.timeout}}</span>
+                <div id="options" class="float-right">
+                <span><a title="edit" class="btn btn-primary btn-sm" href="{{url_for('shifts.edit_shift', shift_id=shift._id)}}"><i class="fa fa-pencil" aria-hidden="true"></i></a></span>
+                <span><a title="delete" data-id='{{shift._id}}' class="btn btn-danger btn-sm conf-delete text-white"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a class="btn btn-success" href="{{url_for('shifts.new_shift')}}"> Create New </a>
+        <span class="pull-right">{{ pagination.links }}</span>
+    </section>
+
+<script type="text/javascript">
+ $(".conf-delete").click(function(){
+    var id = $(this).data('id');
+    bootbox.confirm("Are you sure?", function(result) {
+      if(result)
+          window.location = '/shifts/delete/' + id;
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% block  content%}
+    <div class="alert alert-warning alert-dismissible fade collapse" role="alert" id="inuse">
+       <button type="button" class="close" aria-label="Close" id="closealert"><span aria-hidden="true">&times;</span></button>
+        <i class="fa fa-warning"></i> There is another job with the same date and shift, please check!
+    </div>
+    <section class="add-job-form">
+        <form id="new-job" action="/jobs/new" method="post">
+            <div class="form-row">
+            <div class="form-group input-group col-md-4">
+            <input type='text' name="date" autocomplete="off" class="form-control" placeholder="DATE" id='date' required/>
+            <div class="input-group-append">
+                <span class="input-group-text">
+                    <span class="fa fa-calendar"></span>
+                </span>
+            </div>
+            </div>
+            <div class="form-group input-group col-md-4">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="shift_id">Shift</label>
+                </div>
+                <select class="custom-select" name="shift_id" id="shift_id" required>
+                  <option value="" disabled selected>Choose...</option>
+                  {% for shift in shifts | sort(attribute='timein') %}
+                  <option value="{{shift._id}}">{{shift.desc}}</option>
+                  {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group input-group col-md-4">
+                <a id="checkbutton" class="btn btn-success text-white"> check availability</a>
+            </div>
+
+
+            <section id="joblist" class="d-none">
+                <div class="list-group list-group-flush mb-3">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr class="text-center">
+                          <th scope="col">Printer</th>
+                          <th scope="col">Order_id</th>
+                          <th scope="col">Project</th>
+                          <th scope="col">Color</th>
+                          <th scope="col"></th>
+                          <th scope="col">OBS</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                   {% for printer in printers | sort(attribute='name') %}
+                        <tr class="tr-pr{{loop.index}}">
+                          <th scope="row">{{ printer.name }}
+                          <input class="form-control pr{{loop.index}}" type="text" value="{{printer._id}}" name="printer_id[]" hidden/>
+                          </th>
+
+                          <td>
+                            <div class="form-group input-group col">
+                                <input class="form-control pr{{loop.index}} order-id" data-id="pr{{loop.index}}" type="text" name="order_id[]" placeholder="Order_id" required/>
+                            </div>
+                          </td>
+                          <td>
+                              <div class="form-group input-group">
+                                <select class="selectpicker pr{{loop.index}}" data-live-search="true" name="project_id[]" required>
+                                  <option value="" selected>Choose...</option>
+                                  {% for project in projects | sort(attribute='path') | sort(attribute='name')  %}
+                                  <option value="{{project._id}}">{{project.name}}</option>
+                                  {% endfor %}
+                                </select>
+                            </div>
+                          </td>
+                          <td>
+                               <div class="form-group input-group">
+                                <select class="selectpicker pr{{loop.index}} filament" data-live-search="true" data-id="pr{{loop.index}}" name="filament_id[]" required>
+                                 {% if (latest_jobs[loop.index0] is defined) and (latest_jobs[loop.index0].fromfilaments[0] is defined) %}
+                                    <option value="{{latest_jobs[loop.index0].filament_id}}" data-color="{{latest_jobs[loop.index0].fromfilaments[0].hex_cor}}" selected>{{latest_jobs[loop.index0].fromfilaments[0].name}}</option>
+                                 {% else %}
+                                    <option value="" selected>Choose..</option>
+                                 {% endif %}
+                                  {% for filament in filaments | sort(attribute='cor')  %}
+                                     <option value="{{filament._id}}" data-color="{{filament.hex_cor}}">{{filament.name}}</option>
+                                  {% endfor %}
+                                </select>
+                            </div>
+                          </td>
+                          <td>
+                               <div class="form-group input-group">
+                                {% if (latest_jobs[loop.index0] is defined) and (latest_jobs[loop.index0].fromfilaments[0] is defined) %}
+                                   <div style="background-color: {{ latest_jobs[loop.index0].fromfilaments[0].hex_cor }}" class="color-picker border rounded-circle cor-pr{{loop.index}}"></div>
+                                {% else %}
+                                    <div class="color-picker border rounded-circle cor-pr{{loop.index}} gradient-circle"></div>
+                                {% endif %}
+                            </div>
+                          </td>
+                          <td>
+                              <div class="form-group input-group col">
+                                <input id="pr16" class="form-control pr{{loop.index}}" type="text" name="obs[]" placeholder="Observations"/>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="form-group input-group col">
+                                <input class="status" type="checkbox" data-id="pr{{loop.index}}" checked data-toggle="toggle" data-on="on" data-off="off" name="status[]" data-onstyle="success" value="True">
+                            </div>
+                          </td>
+                        </tr>
+                    {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            </div>
+            <button id="savebutton" type="submit" class="btn btn-primary bg-inactive border-0" disabled>Save</button>
+            <a class="btn btn-secondary" href="{{url_for('jobs.index')}}"> Cancel </a>
+        </form>
+    </section>
+
+   <script type="text/javascript" src="{{ url_for('static', filename='js/loading.js') }}"></script>
+   <script type="text/javascript">
+    var defaults = {
+	calendarWeeks: false,
+	showClear: true,
+	showClose: true,
+	allowInputToggle: true,
+	useCurrent: false,
+	ignoreReadonly: true,
+	toolbarPlacement: 'top',
+	icons: {
+		time: 'fa fa-clock-o',
+		date: 'fa fa-calendar',
+		up: 'fa fa-angle-up',
+		down: 'fa fa-angle-down',
+		previous: 'fa fa-angle-left',
+		next: 'fa fa-angle-right',
+		today: 'fa fa-dot-circle-o',
+		clear: 'fa fa-trash',
+		close: 'fa fa-times'
+        }
+    };
+    var optionsDatetime = $.extend({}, defaults, {format:'YYYY-MM-DD HH:mm'});
+	var optionsDate = $.extend({locale:'en'}, defaults, {format:'YYYY-MM-DD'});
+	var optionsTime = $.extend({}, defaults, {format:'HH:mm'});
+    $(function () {
+        $('#date').datetimepicker(optionsDate);
+    });
+
+
+    $(function() {
+        $('.status').change(function() {
+         if ($(this).prop('checked')) {
+            var id = $(this).attr('data-id');
+            var tr = "tr-" + $(this).attr('data-id');
+            $('.'+id).prop( "disabled", false );
+            $(this).attr("value", true);
+            $('.'+tr).removeClass("bg-inactive");
+         } else {
+             var id = $(this).attr('data-id');
+             var tr = "tr-" + $(this).attr('data-id');
+             $('.'+id).prop( "disabled", true );
+             $('.'+id).val('');
+             $(this).attr("value", false);
+             $('.'+tr).addClass("bg-inactive");
+             $('.'+tr).removeClass("alert-success");
+         }
+    })
+  })
+
+   $(function() {
+        $('.filament').change(function() {
+        var id = $(this).attr('data-id');
+        var picker = "cor-" + id;
+        var cor = $(this).find(":selected").attr('data-color');
+        $('.'+picker).css("background-color", cor);
+        $('.'+picker).removeClass("gradient-circle");
+
+    })
+  })
+
+   $(function() {
+        $('.order-id').change(function() {
+        var id = $(this).attr('data-id');
+        var tr = "tr-" + id;
+         if ($(this).val().length) {
+                $('.'+tr).addClass("alert-success");
+            } else {
+                $('.'+tr).removeClass("alert-success");
+            }
+    })
+  })
+
+  $(function() {
+        $('#checkbutton').click(function() {
+        if ($('#new-job')[0]['date'].reportValidity() && $('#new-job')[0]['shift_id'].reportValidity())
+        {
+            var date = $('#date').val();
+         var shift = $('#shift_id').val();
+             $.ajax({
+              type: 'get',
+              dataType: 'json',
+              cache: false,
+              headers: { "cache-control": "no-cache" },
+              url: '/jobs/check_availability/date='+date+'shift_id='+shift,
+              beforeSend: function () {
+                DarkenPageWithLoading();
+              },
+              success: function (data) {
+                LightenPage();
+                if (data.exist) {
+                    $('#inuse').removeClass('collapse');
+                    $('#inuse').addClass('show');
+                } else {
+                    $('#inuse').addClass('collapse');
+                    $('#inuse').removeClass('show');
+
+                    $('#shift_id').attr("readonly", true);
+                    $('#date').attr("readonly", true);
+
+                    $('#savebutton').removeAttr("disabled");
+                    $('#savebutton').removeClass("bg-inactive");
+                    $('#savebutton').removeClass("border-0");
+
+                    $('#joblist').removeClass("d-none");
+                }
+              }
+            });
+        }
+    })
+  })
+
+  $(function() {
+        $('#closealert').click(function() {
+        $('#inuse').addClass('collapse');
+        $('#inuse').removeClass('show');
+    })
+  })
+
+    </script>
+
+{% endblock %}

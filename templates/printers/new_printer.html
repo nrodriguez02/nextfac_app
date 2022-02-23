@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section class="add-printer-form">
+        <form id="new-printer" action="/printers/new" method="post">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input class="form-control" type="text" id="name" name="name" required/>
+            </div>
+            <div class="form-group">
+                <label for="url">URL</label>
+                <input class="form-control" type="text" id="url" placeholder="http://..." name="url" required/>
+            </div>
+            <div class="form-group">
+                <label for="apikey">ApiKey</label>
+                <input class="form-control" type="text" id="apikey" name="apikey" required/>
+            </div>
+            <div class="form-group">
+                <label for="server">Printer Type: </label>
+                <input id="server" class="form-control" type="checkbox" data-toggle="toggle" data-on="Server" data-off="Client" name="server" data-offstyle="success" data-onstyle="danger" value="False" />
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary" href="{{url_for('printers.index')}}"> Cancel </a>
+        </form>
+    </section>
+{% endblock %}

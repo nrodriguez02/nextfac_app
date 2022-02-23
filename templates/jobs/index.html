@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block  content%}
+   <section>
+       <!-- THE MODAL WE WILL BE USING -->
+          <div class="modal fade" id="modal-check">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                    <h6 class="modal-title text-secondary">Checking job status</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body p-0">
+                  </div>
+              </div>
+            </div>
+          </div>
+       <!-- END MODAL -->
+
+        <div class="list-group list-group-flush mb-3">
+          <div id="accordion">
+           {% set count = namespace(value=1) %}
+           {% for grouper, job in jobs|groupby('date')|sort(attribute='grouper', reverse = True) %}
+              {% set outer_loop = loop %}
+                {% for grouper2, items in job|groupby('shift_id')|sort(reverse = True) %}
+                  {% if outer_loop.index > start and count.value <= pagination.per_page %}
+                    {% set count.value = count.value + 1 %}
+                      <div class="card mb-1 accordion-list-success">
+                        <div class="card-header" id='heading{{ job._id }}'>
+                          <div class="pull-left mb-0 col-md-6 ml-0 pl-0" data-toggle="collapse" data-target='#collapse{{grouper}}{{grouper2}}' aria-expanded="false" aria-controls='collapse{{grouper}}{{grouper2}}'>
+                            <i style="font-size: 28px" class="fa fa-file-text-o fa-2x p-1 mr-3 float-left text-white" aria-hidden="true"></i>
+                            <a class="btn btn-link text-left">
+                              <i aria-hidden="true"></i> {{grouper}} {{items[0].shift.desc}}
+                            </a>
+                          </div>
+                             <div id="options" class="col-md-6 float-right text-right mb-0 mt-1">
+                                 <span><a title="heat" class="btn btn-warning btn-sm text-white conf-heat" href="{{url_for('jobs.heat_printers', date=grouper, shift_id=grouper2)}}"><i class="fa fa-fire" aria-hidden="true"></i></a></span>
+                                 <span><a title="start" class="btn btn-success btn-sm start text-white" data-date="{{grouper}}" data-shift="{{grouper2}}"><i class="fa fa-play" aria-hidden="true"></i></a></span>
+                                 <span><a target="_blank" title="print" class="btn btn-secondary btn-sm" href="{{url_for('jobs.print_jobs', date=grouper, shift_id=grouper2)}}"><i class="fa fa-print" aria-hidden="true"></i></a></span>
+                                 <span><a title="delete" data-id='date={{grouper}}shift_id={{grouper2}}' class="btn btn-danger btn-sm text-white conf-delete"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
+                             </div>
+                        </div>
+                        <div id='collapse{{grouper}}{{grouper2}}' class="collapse mb-2" aria-labelledby='heading{{job.date}}{{job.shift_id}}' data-parent="#accordion">
+                          <div class="card-body">
+                              <table class="table table-bordered table-sm table-hover">
+                                  <thead class="thead-dark">
+                                    <tr>
+                                      <th scope="col">PRINTER</th>
+                                      <th scope="col">ORDER_ID</th>
+                                      <th scope="col">PROJECT</th>
+                                      <th scope="col">COLOR</th>
+                                      <th scope="col">OBS</th>
+                                      {% if grouper >= now %}
+                                        <th scope="col"></th>
+                                      {% endif %}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {% for item in items | sort(attribute='printer.name')%}
+                                      {% if item.status %}
+                                        <tr>
+                                      {% else %}
+                                        <tr class="bg-inactive">
+                                      {% endif %}
+                                          <th scope="row">{{item.printer.name}}</th>
+                                          <td>{{item.order_id}}</td>
+                                          <td>{{item.project.name}}</td>
+                                          <td>{{item.filament.name}}</td>
+                                          <td>{{item.obs}}</td>
+                                          {% if item.date >= now %}
+                                            <td><span><a title="edit" class="btn btn-primary btn-sm" href="{{url_for('jobs.edit_job', job_id=item._id)}}"><i class="fa fa-pencil" aria-hidden="true"></i></a></span></td>
+                                          {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                  </tbody>
+                                </table>
+                          </div>
+                        </div>
+                      </div>
+                  {% endif %}
+                {% endfor %}
+            {% endfor %}
+            </div>
+        </div>
+         <a class="btn btn-success" href="{{url_for('jobs.new_job')}}"> Create New </a>
+         <span class="pull-right">{{ pagination.links }}</span>
+    </section>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/btn-actions.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/loading.js') }}"></script>
+<script type="text/javascript">
+  $(function () {
+
+  $(".start").click(function () {
+      var date = $(this).data('date');
+      var shift = $(this).data('shift');
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      cache: false,
+      headers: { "cache-control": "no-cache" },
+      url: '/jobs/start/date='+date+'shift_id='+shift,
+      beforeSend: function () {
+        DarkenPageWithLoading();
+      },
+      success: function (data) {
+        LightenPage();
+        $("#modal-check").modal("show");
+        $("#modal-check .modal-body").html(data.result);
+      }
+    });
+  });
+
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+<section>
+ {% if status[0] is defined %}
+    <table class="table table-borderless table-sm">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">PRINTER</th>
+              <th scope="col">PROJECT</th>
+              <th scope="col">STATUS</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+             {% for job in status %}
+                <tr class="border-bottom">
+                  <td><a href="{{job[0].printer_url}}" target="_blank" class="text-black"><i class="fa fa-print"></i> {{job[0].printer_name}}</a></td>
+                  <td>{{job[0].job_name}}</td>
+                  <td>{{job[0].error}}</td>
+                  {% if job[0].error == "File not found!" %}
+                    <td><span><a title="edit" class="btn btn-primary btn-sm" href="{{url_for('projects.edit_project', project_id=job[0].project_id)}}"><i class="fa fa-pencil" aria-hidden="true"></i></a></span></td>
+                  {% endif %}
+                </tr>
+            {% endfor %}
+          </tbody>
+    </table>
+
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <a data-date="{{status[0][0].job_date}}" data-shift="{{status[0][0].job_shift}}" class="btn btn-success text-white connectall">Re-Connect All <i class="fa fa-plug"></i></a>
+        <a class="btn btn-primary text-white tryagain" data-date="{{status[0][0].job_date}}" data-shift="{{status[0][0].job_shift}}">Try Again <i class="fa fa-repeat"></i></a>
+    </div>
+ {% else %}
+    <h5 class="p-3 text-success"> <i class="fa fa-print"></i> All printers on the list are printing!</h5>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+ {% endif %}
+</section>
+
+<script type="text/javascript">
+$(".connectall").click(function () {
+      var date = $(this).data('date');
+      var shift = $(this).data('shift');
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      cache: false,
+      headers: { "cache-control": "no-cache" },
+      url: '/jobs/connectall/date='+date+'shift_id='+shift,
+      beforeSend: function () {
+       DarkenPageWithLoading();
+      },
+      success: function (data) {
+        LightenPage();
+        $("#modal-check").modal("show");
+        $("#modal-check .modal-body").html(data.result);
+      }
+    });
+  });
+
+  $(".tryagain").click(function () {
+      var date = $(this).data('date');
+      var shift = $(this).data('shift');
+    $.ajax({
+      type: 'get',
+      dataType: 'json',
+      cache: false,
+      headers: { "cache-control": "no-cache" },
+      url: '/jobs/start/date='+date+'shift_id='+shift,
+      beforeSend: function () {
+        DarkenPageWithLoading();
+      },
+      success: function (data) {
+        LightenPage();
+        $("#modal-check").modal("show");
+        $("#modal-check .modal-body").html(data.result);
+      }
+    });
+  });
+
+</script>

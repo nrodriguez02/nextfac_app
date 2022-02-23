@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block  content%}
+    <div class="jumbotron container col-md-10" style="background-color: #45B449; color: #FFF !important">
+        <h1 class="display-4">NextFactory WebApp v1.2.8 </h1>
+        <p class="lead">Uma solução end-to-end para implementação e controle de linhas de manufatura aditiva.</p>
+        <hr class="my-4">
+        <p class="ml-3 mr-4 text-justify">Faça login com a sua conta para ter acesso ao sistema. Se ainda não estiver cadastrado, entre em contato com o nosso administrador.</p>
+        <div class="page-form col-md-6">
+            <form id="login-form" action="/auth/login" method="post">
+
+                <div class="form-group">
+                    <input type="email" id="email" class="form-control" name="email" placeholder="E-mail" required>
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="password" class="form-control" name="password" placeholder="Password" required>
+                </div>
+
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="remembercheck" name="remembercheck">
+                    <label class="form-check-label" for="remembercheck">
+                      Remember me
+                    </label>
+                  </div>
+
+                <button type="submit" class="btn" style="background-color: #E4E5E6">Log in</button>
+            </form>
+         </div>
+    </div>
+{% endblock %}

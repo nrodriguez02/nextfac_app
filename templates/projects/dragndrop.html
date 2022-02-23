@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block  content%}
+    {{ dropzone.load_css() }}
+    {{ dropzone.load_js() }}
+    <section class="dragndrop">
+        <form action="/projects/new" method="post" class="dropzone dz-clickable mb-5" id="myDropzone" enctype="multipart/form-data">
+            <div class="dz-default dz-message justify-content-center align-items-center pt-4">
+                <i class="fa fa-cloud-upload fa-5x mb-3 text-success" aria-hidden="true"></i><br>
+                <span>Choose your gcodes or drag it here to upload</span><br>
+                <button type="button" class="btn btn-success mt-3">Upload files</button>
+            </div>
+        </form>
+        <center><a class="btn btn-success" href="{{url_for('projects.index')}}"> Go back </a></center>
+        {{ dropzone.config() }}
+    </section>
+    {{ dropzone.style('border: 2px dashed #45B449; font-size:18px ;margin: 10%; min-height: 400px;') }}
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section class="add-shift-form">
+        <form method="post">
+             <div class="form-row">
+            <div class="form-group input-group col-md-10">
+            <input class="form-control" type="text" id="desc" name="desc" placeholder="Description" value={{shift.desc}} required/>
+            </div>
+           <div class="form-group input-group col-md-5">
+            <input type='text' name="timein" class="form-control" autocomplete="off" placeholder="Time IN" id='timein' value={{shift.timein}} required/>
+            <div class="input-group-append">
+                <span class="input-group-text">
+                    <span class="fa fa-clock-o"></span>
+                </span>
+            </div>
+            </div>
+            <div class="form-group input-group col-md-5">
+            <input type='text' name="timeout" class="form-control" autocomplete="off" placeholder="Time OUT" id='timeout' value={{shift.timeout}} required/>
+            <div class="input-group-append">
+                <span class="input-group-text">
+                    <span class="fa fa-clock-o"></span>
+                </span>
+            </div>
+            </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a class="btn btn-secondary" href="{{url_for('shifts.index')}}"> Cancel </a>
+        </form>
+    </section>
+<script type="text/javascript">
+    var defaults = {
+	calendarWeeks: true,
+	showClear: true,
+	showClose: true,
+	allowInputToggle: true,
+	useCurrent: false,
+	ignoreReadonly: true,
+	toolbarPlacement: 'top',
+	icons: {
+		time: 'fa fa-clock-o',
+		date: 'fa fa-calendar',
+		up: 'fa fa-angle-up',
+		down: 'fa fa-angle-down',
+		previous: 'fa fa-angle-left',
+		next: 'fa fa-angle-right',
+		today: 'fa fa-dot-circle-o',
+		clear: 'fa fa-trash',
+		close: 'fa fa-times'
+        }
+    };
+    var optionsDate = $.extend({}, defaults, {format:'DD-MM-YYYY'});
+	var optionsTime = $.extend({}, defaults, {format:'HH:mm'});
+    $(function () {
+        $('#timein').datetimepicker(optionsTime);
+        $('#timeout').datetimepicker(optionsTime);
+    });
+    </script>
+{% endblock %}

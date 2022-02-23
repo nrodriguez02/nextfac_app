@@ -1,0 +1,30 @@
+10 Status Code Definitions
+========================================
+
+200 OK
+201 Created
+202 Accepted
+203 Non-Authoritative Information
+204 No Content
+400 Bad Request
+401 Unauthorized
+402 Payment Required
+403 Forbidden
+404 Not Found
+408 Request Timeout
+500 Internal Server Error
+600 Request Denied
+601 Printer In Use
+602 Printer Disconnected
+603 Printer Ready
+604 Printer Heated
+605 Printer Issue
+606 Printer is not ready
+700 Job Started
+701 Job Paused
+702 Job Issue
+703 Job Cancel
+704 Job Completed
+705 Job Waiting
+
+

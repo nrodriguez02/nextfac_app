@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block  content%}
+    <center><img class="p-4" src="{{ static('images/casaz_logo_black.png', pdf=True) }}" height="130px"></center>
+     <table class="table">
+       <th scope="row" style="border-top:0; font-size: 18px; font-weight: 200">Formulário da produção</th>
+       <th scope="row" style="border: 1px solid #000; text-align: center; font-size: 18px">{{ jobs[0].date }}</th>
+       <th scope="row" style="border: 1px solid #000; background-color: #000000; color: #FFF; text-align: center; font-size: 18px">{{ jobs[0].shift.desc }}</th>
+     </table>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">PRINTER</th>
+          <th scope="col">ORDER_ID</th>
+          <th scope="col">PROJECT</th>
+          <th scope="col">COLOR</th>
+          <th scope="col">OBS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs | sort(attribute='printer.name')%}
+        <tr>
+          <th scope="row">{{job.printer.name}}</th>
+          <td>{{job.order_id}}</td>
+          <td>{{job.project.name}}</td>
+          <td>{{job.filament.name}}</td>
+          <td>{{job.obs}}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section class="add-filament-form">
+        <form method="post">
+            <div class="form-row">
+                <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="cor" name="cor" placeholder="Filament Color" value="{{filament.cor}}" required />
+                </div>
+                 <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="temp" name="temp" placeholder="Temperature" value="{{filament.temp}}" required />
+                </div>
+                 <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="filament_type" name="filament_type" value="{{filament.filament_type}}" placeholder="Filament Type" required />
+                </div>
+                 <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="provider" name="provider" value="{{filament.provider}}" placeholder="Provider" required />
+                </div>
+                 <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="cost" name="cost" value="{{filament.cost}}" placeholder="Cost for 1KG" required />
+                </div>
+                <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="quality" name="quality" value="{{filament.quality}}" placeholder="Quality (1-5)" required />
+                </div>
+                <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="stock" name="stock" value="{{filament.stock}}" placeholder="Product stock quantity" required />
+                </div>
+                <div class="form-group input-group col-md-4">
+                    <input class="form-control" type="text" id="weight" name="weight" value="{{filament.weight}}" placeholder="ex: 1KG or 4K" required />
+                </div>
+                <div class="form-group input-group col-md-4 text-center d-flex justify-content-center align-items-center flex-column">
+                    <input class="form-control mx-auto" type="color" value="{{filament.hex_cor}}" name="hex_cor" id="hex_cor">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a class="btn btn-secondary" href="{{url_for('filaments.index')}}"> Cancel </a>
+        </form>
+    </section>
+{% endblock %}

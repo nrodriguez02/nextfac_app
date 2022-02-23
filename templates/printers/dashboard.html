@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block  content%}
+<link href="{{ url_for('static', filename='css/progressbar_tool.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/progressbar_bed.css') }}" rel="stylesheet">
+
+<section id="render_dashboard">
+    <div class="h-100 d-flex justify-content-center align-items-center m-0 p-0" style="filter: grayscale(100%); -webkit-filter: grayscale(100%);">
+        <img src="{{ url_for('static', filename='images/loading.webp') }}" width="25%" />
+    </div>
+    <div class="h-100 d-flex justify-content-center align-items-center m-0 p-0"><span >Loading...</span></div>
+    <div class="h-100 d-flex justify-content-center align-items-center m-0 p-0"><span >Please wait, this may take a while!</span></div>
+</section>
+
+<script type="text/javascript">
+function load(){
+    var msj = document.getElementById("msj_loading");
+    // don't cache ajax or content won't be fresh
+    $.ajax({
+        cache: false,
+        type: 'get',
+        dataType: 'json',
+        headers: { "cache-control": "no-cache" },
+        url: '/printers/dashboard_update',
+
+        success: function (data) {
+            $("#render_dashboard").html(data.result);
+            if (msj !== null){
+                msj.innerHTML = "";
+            }
+        },
+
+        complete: function() {
+            // Schedule the next request when the current one's complete
+            setTimeout(load, 3000);
+        }
+    });
+// end
+}
+
+$(load());
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+
+{% endblock %}

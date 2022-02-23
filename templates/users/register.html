@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container page-form">
+    <form id="register-form" action="/auth/register" method="post">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control" name="name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+            <label for="area">Area</label>
+            <input type="area" id="area" class="form-control" name="area" placeholder="Administration" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" name="email" placeholder="user@domain.com" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" name="password" placeholder="some secret password" required>
+        </div>
+         <div class="form-group">
+         <label for="group">Group</label>
+         <select class="custom-select" name="group_id" id="group_id" required>
+                <option value="" disabled selected>Choose...</option>
+                <option value="4">Operador</option>
+                <option value="3">Programador</option>
+                <option value="2">Analista</option>
+                <option value="1">Administrativo</option>
+                <option value="0">AdminSys</option>
+         </select>
+         </div>
+
+        <button type="submit" class="btn btn-success">Sign up</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section class="add-job-form">
+        <form method="post">
+            <div class="form-row">
+            <div class="form-group input-group col-md-4">
+            <input type='text' name="date" autocomplete="off" class="form-control" placeholder="DATE" id='date' value="{{job.date}}" disabled/>
+            <div class="input-group-append">
+                <span class="input-group-text">
+                    <span class="fa fa-calendar"></span>
+                </span>
+            </div>
+            </div>
+            <div class="form-group input-group col-md-5">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="shift_id">Shift</label>
+                </div>
+                <select class="custom-select" name="shift_id" id="shift_id" disabled>
+                  <option value="job.shift_id" disabled selected>{{job.shift.desc}}</option>
+                </select>
+                <input class="form-control" type="text" value="{{job.shift_id}}" name="shift_id" hidden/>
+            </div>
+
+            <section>
+                <div class="list-group list-group-flush mb-3">
+                    <table class="table">
+                      <thead class="thead-dark">
+                        <tr>
+                          <th scope="col">Printer</th>
+                          <th scope="col">Order_id</th>
+                          <th scope="col">Project</th>
+                          <th scope="col">Color</th>
+                          <th scope="col">OBS</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>                  
+                        <tr>
+                          <th scope="row">{{ job.printer.name }}
+                          <input class="form-control" type="text" value="{{job.printer_id}}" name="printer_id" hidden/>
+                          </th>
+
+                          <td>
+                            <div class="form-group input-group col">
+                                <input class="form-control pr{{job._id}}" type="text" value="{{job.order_id}}" name="order_id" placeholder="Order_id" required/>
+                            </div>
+                          </td>
+                          <td>
+                              <div class="form-group input-group">
+                                <select class="selectpicker pr{{job._id}}" data-live-search="true" name="project_id" required>
+                                  {% if job.project_id != None %}
+                                    <option value="{{job.project_id}}" selected>{{job.project.name}}</option>
+                                  {% else %}
+                                    <option value="" selected disabled>Choose...</option>
+                                  {% endif %}
+                                  {% for project in projects | sort(attribute='path') | sort(attribute='name')  %}
+                                  <option value="{{project._id}}">{{project.name}}</option>
+                                  {% endfor %}
+                                </select>
+                            </div>
+                          </td>
+                          <td>
+                               <div class="form-group input-group">
+                                <select class="selectpicker pr{{job._id}}" data-live-search="true" name="filament_id" required>
+                                  {% if job.filament_id != None %}
+                                    <option value="{{job.filament_id}}" selected>{{job.filament.name}}</option>
+                                  {% else %}
+                                    <option value="" selected disabled>Choose...</option>
+                                  {% endif %}
+                                  {% for filament in filaments | sort(attribute='cor')  %}
+                                  <option value="{{filament._id}}">{{filament.name}}</option>
+                                  {% endfor %}
+                                </select>
+                            </div>
+                          </td>
+                          <td>
+                              <div class="form-group input-group col">
+                                <input id="pr16" class="form-control pr{{job._id}}" type="text" value="{{job.obs}}" name="obs" placeholder="Observations"/>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="form-group input-group col">
+                                <input class="status" type="checkbox" data-id="pr{{job._id}}" checked data-toggle="toggle" data-on="on" data-off="off" name="status" data-onstyle="success">
+                            </div>
+                          </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <a class="btn btn-secondary" href="{{url_for('jobs.index')}}"> Cancel </a>
+        </form>
+    </section>
+   <script type="text/javascript">
+    $(function() {
+        $('.status').change(function() {
+         if ($(this).prop('checked')) {
+            var id = $(this).attr('data-id');
+            $('.'+id).prop( "disabled", false );
+         } else {
+             var id = $(this).attr('data-id');
+             $('.'+id).prop( "disabled", true );
+         }
+    })
+  })
+
+    </script>
+{% endblock %}

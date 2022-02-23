@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block  content%}
+    <section>
+        <div class="list-group list-group-flush mb-3">
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Print Time</th>
+                  <th scope="col">Weight</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+           {% for project in projects | sort(attribute='path') | sort(attribute='name') %}
+                <tr>
+                  <th scope="row">{{ loop.index + pagination.skip }}</th>
+                  <td>{{project.name}}</td>
+                  <td>{{project.time}}</td>
+                  <td>{{project.weight}}</td>
+                  <td class="text-right">
+                    <span><a title="edit" class="btn btn-primary btn-sm" href="{{url_for('projects.edit_project', project_id=project._id)}}"><i class="fa fa-pencil" aria-hidden="true"></i></a></span>
+                    <span><a title="delete" data-id='{{project._id}}' class="btn btn-danger btn-sm conf-delete text-white"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
+                  </td>
+                </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a class="btn btn-success" href="{{url_for('projects.new_project')}}"> Create New </a>
+        <span class="pull-right">{{ pagination.links }}</span>
+    </section>
+
+<script type="text/javascript">
+ $(".conf-delete").click(function(){
+    var id = $(this).data('id');
+    bootbox.confirm("Are you sure?", function(result) {
+      if(result)
+          window.location = '/projects/delete/' + id;
+    });
+  });
+</script>
+{% endblock %}
